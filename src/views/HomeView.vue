@@ -38,8 +38,55 @@
         </tr>
       </thead>
       <tbody>
-       
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+          <td>Mark</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+          <td>@mdo</td>
+        </tr>
       </tbody>
     </table>
+
+    <div class="row">
+      <div class="col-4">
+
+      </div>
+      <div class="col-8">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
 </div>
 </template>
+<script setup>
+import { onMounted } from 'vue'
+import axios from 'axios'
+
+//mounted for hook when initial page
+onMounted(() => {
+  get()
+})
+
+
+//function 
+const get = () => {
+  axios.get("https://restcountries.com/v3.1/all?fields=name,flags").then(response => {
+    console.log(response)
+  })
+}
+</script>
