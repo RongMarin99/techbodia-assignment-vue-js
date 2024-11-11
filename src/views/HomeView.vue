@@ -52,10 +52,14 @@
     </table>
 
     <div class="row">
-      <div class="col-4">
-
+      <div class="col-1">
+        <select class="form-select" v-model="pageSize">
+          <option v-for="(item, index) in paginationOption" :key="index" :value="item">
+            {{ item }}
+          </option>
+        </select>
       </div>
-      <div class="col-8">
+      <div class="col-11">
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-end">
             <li class="page-item disabled">
@@ -74,8 +78,15 @@
 </div>
 </template>
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
+
+const pageSize = ref(25)
+const currentPage = ref(1);
+const lists = ref([])
+const paginationOption = ref([
+  25, 50, 75, 100
+])
 
 //mounted for hook when initial page
 onMounted(() => {
@@ -86,7 +97,13 @@ onMounted(() => {
 //function 
 const get = () => {
   axios.get("https://restcountries.com/v3.1/all?fields=name,flags").then(response => {
-    console.log(response)
+    lists.value = getPaginatedData(response.data, currentPage.value)
   })
+}
+
+const getPaginatedData = (countries, page) => {
+  const start = (page - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return countries.slice(start, end);
 }
 </script>
