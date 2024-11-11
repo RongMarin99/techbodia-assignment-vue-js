@@ -1,7 +1,7 @@
 
 <template>
   <div class="container">
-    <div class="row p-3">
+    <div class="row p-3 bg-light mb-2 fixed-header" >
       <div class="col-4">
             <form class="d-flex">
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <table class="table">
+    <!-- <table class="table">
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -49,9 +49,35 @@
           <td>@mdo</td>
         </tr>
       </tbody>
-    </table>
-
+    </table> -->
     <div class="row">
+      <div v-for="(item, index) in lists" class="col-3 mb-2">
+        <div class="card">
+          <div class="card-img-top image-bg" >
+            <img  :src="item.flags.png" alt="">
+          </div>
+          
+          <div class="card-body">
+            <h5 class="card-title">{{ item.name.common }}</h5>
+            <ul>
+              <li>2 character Country Code: {{ item.cca2 }}</li>
+              <li>3 character Country Code: {{ item.cca3 }}</li>
+              <li>Native Country Name: {{ item.name.nativeName?.eng?.official }}</li>
+              <li>Alternative Country Name: 
+                <ul>
+                    <li v-for="(row,i) in item.altSpellings" :key="i">
+                      {{ row }}
+                    </li>
+                </ul>
+              </li>
+              <li>Country Calling Codes: {{ item.idd.root }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row bg-light p-3">
       <div class="col-1">
         <select class="form-select" v-model="pageSize">
           <option v-for="(item, index) in paginationOption" :key="index" :value="item">
@@ -96,7 +122,7 @@ onMounted(() => {
 
 //function 
 const get = () => {
-  axios.get("https://restcountries.com/v3.1/all?fields=name,flags").then(response => {
+  axios.get("https://restcountries.com/v3.1/all?fields=name,flags,cca2,cca3,altSpellings,idd").then(response => {
     lists.value = getPaginatedData(response.data, currentPage.value)
   })
 }
