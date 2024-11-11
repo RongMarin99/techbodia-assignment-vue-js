@@ -78,40 +78,44 @@
     </div>
 
     <div class="row bg-light p-3">
-      <div class="col-1">
-        <select class="form-select" v-model="filter.pageSize">
-          <option v-for="(item, index) in paginationOption" :key="index" :value="item">
-            {{ item }}
-          </option>
-        </select>
-      </div>
-      <div class="col-11">
+      <div class="col-12">
         <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-end">
-            <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          <ul class="pagination">
+            <!-- Previous Button -->
+            <li class="page-item" :class="{ disabled: filter.currentPage === 1 }">
+              <a class="page-link" href="#" @click.prevent="goToPage(filter.currentPage - 1)">Previous</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#">Next</a>
+
+            <!-- Page Numbers -->
+            <li 
+              v-for="page in visiblePages" 
+              :key="page" 
+              class="page-item" 
+              :class="{ active: page === filter.currentPage }">
+              <a class="page-link" href="#" @click.prevent="goToPage(page)">{{ page }}</a>
+            </li>
+
+            <!-- Next Button -->
+            <li class="page-item" :class="{ disabled: filter.currentPage === filter.totalPages }">
+              <a class="page-link" href="#" @click.prevent="goToPage(filter.currentPage + 1)">Next</a>
             </li>
           </ul>
+
         </nav>
       </div>
     </div>
 </div>
 </template>
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, reactive, computed } from 'vue'
 import axios from 'axios'
 
-// const pageSize = ref(25)
+const pagination = ref(null)
 // const currentPage = ref(1);
 const filter = reactive({
   pageSize: 25,
   currentPage: 1,
+  totalPages: 0,
   search: '',
   orderBy: 'desc'
 })
@@ -124,6 +128,22 @@ const paginationOption = ref([
 //mounted for hook when initial page
 onMounted(() => {
   get()
+  
+})
+
+//computed
+const visiblePages = computed(() => {
+  const pages = [];
+  const half = Math.floor(3 / 2); // 1 page before and 1 page after current
+  const startPage = Math.max(1, filter.currentPage - half);
+  const endPage = Math.min(filter.totalPages, filter.currentPage + half);
+
+  // Ensure that we have exactly 3 pages (current + 1 before, 1 after)
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
 })
 
 
@@ -132,6 +152,7 @@ const get = () => {
   axios.get("https://restcountries.com/v3.1/all?fields=name,flags,cca2,cca3,altSpellings,idd").then(response => {
     all_data.value = response.data
     getPaginatedData(all_data.value, filter.currentPage)
+    filter.totalPages = Math.ceil(all_data.value.length / filter.pageSize);
   })
 }
 
@@ -159,4 +180,19 @@ const getPaginatedData = (countries, page, searchTerm = '') => {
   lists.value = countries.slice(start, end);
   orderChange()
 }
+
+const getItemsForCurrentPage = () => {
+  const startIndex = (filter.currentPage - 1) * filter.pageSize;
+  const endIndex = startIndex + filter.pageSize;
+  return all_data.value.slice(startIndex, endIndex);
+}
+
+
+const goToPage = (page) => {
+  if (page < 1 || page > filter.totalPages) return;
+  filter.currentPage = page;
+  getPaginatedData(all_data.value, filter.currentPage)
+}
+
+
 </script>
