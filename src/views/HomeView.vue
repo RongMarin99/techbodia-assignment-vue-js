@@ -13,9 +13,9 @@
             <label class="mt-1" for="">Order by Country Name: </label>
           </div>
           <div class="col-4">
-            <select class="form-select"  name="" id="">
+            <select v-model="filter.orderBy" class="form-select" @change="orderChange">
               <option value="asc">ASC</option>
-              <option  value="desc">DESC</option>
+              <option value="desc">DESC</option>
             </select>
           </div>
         </div>
@@ -112,7 +112,8 @@ import axios from 'axios'
 const filter = reactive({
   pageSize: 25,
   currentPage: 1,
-  search: ''
+  search: '',
+  orderBy: 'desc'
 })
 const lists = ref([])
 const all_data = ref([])
@@ -134,7 +135,16 @@ const get = () => {
   })
 }
 
+const orderChange = () => {
+  return lists.value.sort((a, b) => {
+    const aName = a.name.official;
+    const bName = b.name.official;
 
+    if (aName < bName) return filter.orderBy === 'asc' ? -1 : 1;
+    if (aName > bName) return filter.orderBy === 'asc' ? 1 : -1;
+    return 0; // Equal values
+  });
+}
 
 const getPaginatedData = (countries, page, searchTerm = '') => {
   if(searchTerm){
@@ -147,5 +157,6 @@ const getPaginatedData = (countries, page, searchTerm = '') => {
   const start = (page - 1) * filter.pageSize;
   const end = start + filter.pageSize;
   lists.value = countries.slice(start, end);
+  orderChange()
 }
 </script>
