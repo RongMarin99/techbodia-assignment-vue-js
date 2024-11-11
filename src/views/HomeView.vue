@@ -28,29 +28,17 @@
       <thead>
         <tr>
           <th scope="col">#</th>
-          <th scope="col">First</th>
-          <th scope="col">Last</th>
-          <th scope="col">Handle</th>
+          <th scope="col">Flags</th>
+          <th scope="col">Country Name</th>
+          <th scope="col">2 character Country Code</th>
+          <th scope="col">3 character Country Code</th>
+          <th scope="col">Native Country Name</th>
+          <th scope="col">Alternative Country Name</th>
+          <th scope="col">Country Calling Codes</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td colspan="2">Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
+       
       </tbody>
     </table>
 </div>
