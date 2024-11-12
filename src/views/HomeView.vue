@@ -24,6 +24,10 @@
       </div>
     </div>
 
+    <div v-if="showModal">
+      <Modal :item="item" ref="modalRef" />
+    </div>
+    
     <!-- <table class="table">
       <thead>
         <tr>
@@ -58,7 +62,9 @@
           </div>
           
           <div class="card-body">
-            <h5 class="card-title">{{ item.name.official }}</h5>
+            <h5 class="card-title" style="cursor: pointer;"  @click="openModal(item)">
+              {{ item.name.official }}
+            </h5>
             <ul>
               <li>2 character Country Code: {{ item.cca2 }}</li>
               <li>3 character Country Code: {{ item.cca3 }}</li>
@@ -107,11 +113,13 @@
 </div>
 </template>
 <script setup>
-import { onMounted, ref, reactive, computed } from 'vue'
+import { onMounted, ref, reactive, computed, nextTick } from 'vue'
+import Modal from '@/components/Modal.vue'
 import axios from 'axios'
 
-const pagination = ref(null)
-// const currentPage = ref(1);
+const showModal = ref(false)
+const modalRef = ref(null)
+const item = reactive({})
 const filter = reactive({
   pageSize: 25,
   currentPage: 1,
@@ -121,9 +129,7 @@ const filter = reactive({
 })
 const lists = ref([])
 const all_data = ref([])
-const paginationOption = ref([
-  25, 50, 75, 100
-])
+
 
 //mounted for hook when initial page
 onMounted(() => {
@@ -181,10 +187,13 @@ const getPaginatedData = (countries, page, searchTerm = '') => {
   orderChange()
 }
 
-const getItemsForCurrentPage = () => {
-  const startIndex = (filter.currentPage - 1) * filter.pageSize;
-  const endIndex = startIndex + filter.pageSize;
-  return all_data.value.slice(startIndex, endIndex);
+const openModal = (data) => {
+  showModal.value = true
+  Object.assign(item, data)
+  nextTick(() => {
+    modalRef.value.showModalAction()
+  })
+  
 }
 
 
